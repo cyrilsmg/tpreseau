@@ -71,10 +71,18 @@ while(1){
     int nb=poll(descripteurs,compteur,-1);
     if(nb<0){ perror("main.poll"); exit(EXIT_FAILURE); }
     if((descripteurs[0].revents&POLLIN)!=0){
-        int dialogue=accept(s,NULL,NULL);
-        if(dialogue >= 0)
-        i=0;
-            
+      i=0;
+      while(i<MAX_CONNEXIONS && (descripteurs[i].fd != SOCKET_ERROR))
+      i++;
+      if(i==MAX_CONNEXIONS)
+      else{
+        if((desc[i].fd = accept(descripteurs[MAX_CONNEXIONS].fd, NULL, NULL)) < 0)
+          return -1;
+        if(clientProcess(descripteurs[i].fd) <= 0){
+          close(descripteurs[i].fd);
+          descripteurs[i].fd = SOCKET_ERROR;
+          }
+      }      
     }
     for(int k=1;k<compteur;k++){
         if((descripteurs[k].revents&POLLIN)!=0){
