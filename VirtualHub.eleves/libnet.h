@@ -22,3 +22,4 @@ int read_fixed(int descripteur,unsigned char *array,int size);
 int creationInterfaceVirtuelle(char *nom);
 int boucleServeur(int ecoute,int (*traitement)(int));
 int initialisationServeur(char *service,int connexions);
+int ecouterClient(SOCKET sock);
