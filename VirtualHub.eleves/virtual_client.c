@@ -25,7 +25,7 @@
 /* Fonction principale */
 int main(int argc,char *argv[])
 {
-int s;
+SOCKET sock;
 
 /* Lecture des arguments de la commande */
 if(argc!=3){
@@ -40,12 +40,12 @@ char *port=argv[2];
 fprintf(stdout,"HUB sur %s port %s\n",serveur,port);
 #endif
 
-s=connexionServeur(serveur,port);
-if(s<0){ fprintf(stderr,"Erreur de connexion au serveur\n"); exit(EXIT_FAILURE); }    
+sock=connexionServeur(serveur,port);
+if(sock<0){ fprintf(stderr,"Erreur de connexion au serveur\n"); exit(EXIT_FAILURE); }    
 
 /* Boucle de communication avec le serveur */
 struct pollfd descripteurs[2];
-descripteurs[0].fd=s;
+descripteurs[0].fd=sock;
 descripteurs[0].events=POLLIN;
 descripteurs[1].fd=0;
 descripteurs[1].events=POLLIN;
@@ -54,19 +54,19 @@ while(1){
   int nb=poll(descripteurs,2,-1);
   if(nb<0){ perror("main.poll"); exit(EXIT_FAILURE); }
   if((descripteurs[0].revents&POLLIN)!=0){
-    int taille=read(s,tampon,MAX_TAMPON);
+    int taille=read(sock,tampon,MAX_TAMPON);
     if(taille<=0) break;
     write(1,tampon,taille);
     }
   if((descripteurs[1].revents&POLLIN)!=0){
     int taille=read(0,tampon,MAX_TAMPON);
     if(taille<=0) break;
-    write(s,tampon,taille);
+    write(sock,tampon,taille);
     }
   }
 
 /* On termine la connexion */
-shutdown(s,SHUT_RDWR);
+shutdown(sock,SHUT_RDWR);
 
 return 0;
 }
