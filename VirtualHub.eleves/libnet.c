@@ -32,11 +32,12 @@
 
 /**** Fonctions de gestion des sockets ****/
 
-int initialisationServeur(char *service,int connexions)
+int initialisationServeur(short int port)
 {
 struct addrinfo precisions,*resultat;
 int statut;
 int s;
+char service[BUF_SIZE];
 /* Construction de la structure adresse */
 memset(&precisions,0,sizeof precisions);
 precisions.ai_family=AF_UNSPEC;
@@ -63,19 +64,19 @@ if(statut<0) return -1;
 /* Liberation de la structure d'informations */
 freeaddrinfo(resultat);
 /* Taille de la queue d'attente */
-statut=listen(s,connexions);
+statut=listen(s,port);
 if(statut<0) return -1;
 return s;
 }
 
-int boucleServeur(SOCKET sock,int (*traitement)(int))
+int boucleServeur(int sock,int (*traitement)(int))
 {
 struct pollfd descripteurs[MAX_CONNEXION+1];
 int i;
 int c=0;
 for(i=0; i<MAX_CONNEXION; i++)
 	{
-	descripteurs[i].fd = SOCKET_ERROR;
+	descripteurs[i].fd = -1;
 	descripteurs[i].events = POLLIN;
 	}
 descripteurs[MAX_CONNEXION].fd = sock;
@@ -98,7 +99,7 @@ while(1)
 				{
 				printf("oh ! :( un client est parti\n");
 				close(descripteurs[i].fd);
-				descripteurs[i].fd = SOCKET_ERROR;
+				descripteurs[i].fd = -1;
 				}
 			}
 		}
@@ -106,7 +107,7 @@ while(1)
 			{
 			printf("ouais ! Un nouveau client :D !\n");
 			c=0;
-			while(c<MAX_CONNEXION && (descripteurs[c].fd != SOCKET_ERROR))
+			while(c<MAX_CONNEXION && (descripteurs[c].fd != -1))
 			c++;
 			if(c==MAX_CONNEXION)
 				printf("Desole on est complet ce soir\n");
@@ -118,7 +119,7 @@ while(1)
 					{
 					printf("Un client est parti :'(\n");
 					close(descripteurs[c].fd);
-					descripteurs[c].fd = SOCKET_ERROR;
+					descripteurs[c].fd = -1;
 					}
 				}
 			}
@@ -146,7 +147,7 @@ freeaddrinfo(resultat);
 return s;
 }
 
-int ecouterClient(SOCKET sock)
+int ecouterClient(int sock)
 {
 	char buffer[BUF_SIZE];
 	int n = 0;
