@@ -25,7 +25,7 @@
 /* Fonction principale */
 int main(int argc,char *argv[])
 {
-SOCKET sock;
+int sock;
 
 /* Lecture des arguments de la commande */
 if(argc!=3){
