@@ -47,7 +47,7 @@ return 0;
 /* Fonction principale */
 int main(int argc,char *argv[]){
 
-SOCKET sock;
+int sock;
 // Analyse des arguments
 if(argc!=2){
   fprintf(stderr,"Syntaxe : switch <port>\n");
@@ -59,7 +59,7 @@ fprintf(stdout,"Port : %d\n",port);
 #endif
 
 //Initialisation du serveur
-if((sock = initialisationServeur(port)) == SOCKET_ERROR)
+if((sock = initialisationServeur(port)) == -1)
 {
 printf("L initialisation a foire\n");
 return 1;
