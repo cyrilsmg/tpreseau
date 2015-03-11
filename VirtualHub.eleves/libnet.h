@@ -8,10 +8,10 @@
 /**** Constantes ****/
 
 /** Nombre maximum de connexions tamponnees pour le serveur **/
-
+#include <sys/socket.h>
 #define MAX_CONNEXION	32
 #define MAX_TAMPON 64
-
+#define BUF_SIZE 1024
 /**** Fonctions ****/
 
 int nomVersAdresse(char *hote,struct sockaddr_storage *padresse);
@@ -21,5 +21,5 @@ int connexionServeur(char *hote,char *service);
 int read_fixed(int descripteur,unsigned char *array,int size);
 int creationInterfaceVirtuelle(char *nom);
 int boucleServeur(int ecoute,int (*traitement)(int));
-int initialisationServeur(char *service,int connexions);
-int ecouterClient(SOCKET sock);
+int initialisationServeur(short int port);
+int ecouterClient(int sock);
